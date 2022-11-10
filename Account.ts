@@ -1,8 +1,16 @@
-import { Transaction } from './Models';
+import { Account, Transaction } from './Models';
 
-export class Account {
+export class Accounts {
 
-    public calculateBalance(transaction: Transaction) {
-
+    public calculateBalance(account: Account): Number {
+        let totalAmount = 0;
+        account.transactions.forEach(rec => {
+            if (rec.to === account.name) {
+                totalAmount += rec.amount;
+            } else {
+                totalAmount -= rec.amount;
+            }
+        })
+        return totalAmount;
     }
 }

@@ -41,7 +41,6 @@ let readlineSync = require('readline-sync');
     let transactions = [];
     for (let i = 0; i < transactionsList.length; i++) {
         let entry = (0, sync_1.parse)(transactionsList[i][0], { delimiter: ',' });
-        // console.log(entry[0][0])
         let t = {
             date: (0, moment_1.default)(entry[0][0], 'DD-MM-YYYY'),
             from: entry[0][1],
@@ -51,17 +50,16 @@ let readlineSync = require('readline-sync');
         };
         transactions.push(t);
     }
-    console.log(transactions);
-    let supportBankInterface = new SupportBankInterface_1.SupportBankInterface();
+    let supportBankInterface = new SupportBankInterface_1.SupportBankInterface(transactions);
     let command = readlineSync.question('Enter command: ');
     command = command.toLowerCase();
     if (command.includes("list")) {
-        let name = command.replace("list", "");
+        let name = command.replace("list ", "");
         if (name === "all") {
             supportBankInterface.ListAll();
         }
         else {
-            // supportBankInterface.ListAccount(name);
+            supportBankInterface.ListAccount(name);
         }
     }
     else {

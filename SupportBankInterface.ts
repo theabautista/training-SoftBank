@@ -1,12 +1,12 @@
-import {Transaction, TransactionFromCSV, Account} from './Models';
-import moment from "moment/moment";
+import {Transaction, Account} from './Models';
+import { Accounts } from './Account';
 
 export class SupportBankInterface {
     private accountNames: string[] = [];
-    private transactionsFromFile: TransactionFromCSV[] = [];
+    private transactionsFromFile: Transaction[] = [];
     private accounts: Account[] = [];
 
-    constructor(transactionsFromFile: TransactionFromCSV[]) {
+    constructor(transactionsFromFile: Transaction[]) {
         this.transactionsFromFile = transactionsFromFile;
         this.accountNames = [...new Set(this.transactionsFromFile.map(item => item.from))];
         this.accounts = this.getAllAccountTransactions();
@@ -14,38 +14,31 @@ export class SupportBankInterface {
 
     private getAllAccountTransactions = (): Account[] => {
         let allAccounts = [];
-        for (let name in this.accountNames) {
-            let allTransactions: Transaction[] = this.transactionsFromFile.reduce((transactions: Transaction[], currentTransaction: TransactionFromCSV) => {
-                if (currentTransaction.from === name) {
-                    let mappedValue = this.mapTransactionFromCSVToTransaction(currentTransaction);
-                    transactions.push(mappedValue);
+        for (let i=0; i < this.accountNames.length; i++) {
+            let allTransactions: Transaction[] = this.transactionsFromFile.reduce((transactions: Transaction[], currentTransaction: Transaction) => {
+                if (currentTransaction.from === this.accountNames[i] || currentTransaction.to === this.accountNames[i]) {
+                    transactions.push(currentTransaction);
                 }
                 return transactions;
             }, []);
             allAccounts.push({
-                name: name,
+                name: this.accountNames[i],
                 transactions: allTransactions,
             })
         }
         return allAccounts;
     }
 
-    private mapTransactionFromCSVToTransaction = (transactionFromCSV: TransactionFromCSV): Transaction => {
-        return {
-            date: transactionFromCSV.date,
-            to: transactionFromCSV.to,
-            narrative: transactionFromCSV.narrative,
-            amount: transactionFromCSV.amount,
-        }
-    }
-
     public ListAll(): void {
-        return
+        let accountsCalc = new Accounts();
+        this.accounts.forEach(rec => {
+            console.log(rec.name, ':', accountsCalc.calculateBalance(rec).toFixed(2))
+        })
     }
 
     public ListAccount = (name: string): void => {
         console.log("Showing all transactions for ", name);
-        let relevantAccount = this.accounts.find(account => account.name === name);
+        let relevantAccount = this.accounts.find(account => account.name.toLowerCase() === name);
         console.log(relevantAccount? relevantAccount.transactions : "Account does not exist");
     }
 };

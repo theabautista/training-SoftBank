@@ -3,7 +3,7 @@ import { parse } from 'csv-parse/sync';
 import { SupportBankInterface } from './SupportBankInterface';
 import * as path from 'path';
 import * as fs from 'fs';
-import {TransactionFromCSV} from "./Models";
+import {Transaction} from "./Models";
 let readlineSync = require('readline-sync');
 moment().format();
 
@@ -13,10 +13,10 @@ moment().format();
     let transactionsList = parse(fileContent, { delimiter: '\n'});
     transactionsList.shift();
 
-    let transactions: TransactionFromCSV[] = [];
+    let transactions: Transaction[] = [];
     for (let i = 0; i < transactionsList.length; i++) {
         let entry = parse(transactionsList[i][0], {delimiter: ','});
-        let t: TransactionFromCSV = {
+        let t: Transaction = {
             date: moment(entry[0][0], 'DD-MM-YYYY'),
             from: entry[0][1],
             to: entry[0][2],
@@ -26,14 +26,14 @@ moment().format();
         transactions.push(t);
     }
 
-    let supportBankInterface = new SupportBankInterface();
+    let supportBankInterface = new SupportBankInterface(transactions);
 
     let command = readlineSync.question('Enter command: ');
     command = command.toLowerCase();
     if (command.includes("list")) {
-        let name = command.replace("list","")
+        let name = command.replace("list ","")
         if ( name === "all") {
-            // supportBankInterface.ListAll();
+            supportBankInterface.ListAll();
         } else {
             supportBankInterface.ListAccount(name);
         }
