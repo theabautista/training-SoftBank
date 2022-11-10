@@ -35,7 +35,7 @@ moment().format();
         if ( name === "all") {
             // supportBankInterface.ListAll();
         } else {
-            // supportBankInterface.ListAccount(name);
+            supportBankInterface.ListAccount(name);
         }
     } else{
         console.error('Enter correct command');

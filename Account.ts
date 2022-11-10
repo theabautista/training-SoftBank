@@ -1,15 +1,8 @@
 import { Transaction } from './Models';
 
-export class AccountCalculations {
-    private name: string;
-    private transactions: Transaction[] = []
+export class Account {
 
-    constructor(name: string) {
-        this.name = name;
-        private transactions: Transaction[] = []
-    }
-
-    public addTransaction(transaction: Transaction) {
+    public calculateBalance(transaction: Transaction) {
 
     }
 }
